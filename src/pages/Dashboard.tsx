@@ -63,77 +63,78 @@ const Dashboard = () => {
         </div>
 
         {/* Overview Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <Card className="metric-card fade-in">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Portfolio</CardTitle>
-              <DollarSign className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Portfolio</CardTitle>
+              <DollarSign className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">€{totalInvestments.toLocaleString()}</div>
-              <p className="text-xs text-muted-foreground">+2.1% from last month</p>
+              <div className="text-3xl font-bold text-foreground">€{totalInvestments.toLocaleString()}</div>
+              <p className="text-xs text-success mt-1">+2.1% from last month</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="metric-card fade-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Total Return</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Total Return</CardTitle>
+              <TrendingUp className="h-5 w-5 text-success" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-green-600">+{totalReturn}%</div>
-              <p className="text-xs text-muted-foreground">Annualized return</p>
+              <div className="text-3xl font-bold text-success">+{totalReturn}%</div>
+              <p className="text-xs text-muted-foreground mt-1">Annualized return</p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="metric-card fade-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Economic Activity</CardTitle>
-              <Activity className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Economic Activity</CardTitle>
+              <Activity className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className={`text-2xl font-bold ${isEconomicActivityLow ? 'text-destructive' : 'text-green-600'}`}>
+              <div className={`text-3xl font-bold ${isEconomicActivityLow ? 'text-destructive' : 'text-success'}`}>
                 {economicActivityPercentage}%
               </div>
-              <p className="text-xs text-muted-foreground">
+              <p className={`text-xs mt-1 ${isEconomicActivityLow ? 'text-destructive' : 'text-muted-foreground'}`}>
                 {isEconomicActivityLow ? 'Below target (55%)' : 'Above target'}
               </p>
             </CardContent>
           </Card>
 
-          <Card>
+          <Card className="metric-card fade-in" style={{ animationDelay: '0.3s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium">Investments</CardTitle>
-              <TrendingUp className="h-4 w-4 text-muted-foreground" />
+              <CardTitle className="text-sm font-medium text-muted-foreground">Investments</CardTitle>
+              <TrendingUp className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{investments.length}</div>
-              <p className="text-xs text-muted-foreground">Active positions</p>
+              <div className="text-3xl font-bold text-foreground">{investments.length}</div>
+              <p className="text-xs text-muted-foreground mt-1">Active positions</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Economic Activity Progress */}
-        <Card>
+        <Card className="metric-card slide-up" style={{ animationDelay: '0.4s' }}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Activity className="h-5 w-5" />
+            <CardTitle className="flex items-center gap-2 text-foreground">
+              <Activity className="h-5 w-5 text-primary" />
               Economic Activity Progress
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="space-y-4">
+              <div className="flex justify-between text-sm text-muted-foreground">
                 <span>Current: {economicActivityPercentage}%</span>
                 <span>Target: 55%</span>
               </div>
               <Progress 
                 value={economicActivityPercentage} 
-                className="h-3"
+                className={`h-3 progress-bar ${isEconomicActivityLow ? 'text-destructive' : 'text-success'}`}
               />
               {isEconomicActivityLow && (
-                <p className="text-sm text-destructive">
-                  ⚠️ Economic activity percentage is below the 55% target
+                <p className="text-sm text-destructive flex items-center gap-2">
+                  <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
+                  Economic activity percentage is below the 55% target
                 </p>
               )}
             </div>
@@ -143,26 +144,31 @@ const Dashboard = () => {
         {/* Investment Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Economic Activity Investments */}
-          <Card>
+          <Card className="investment-card slide-up" style={{ animationDelay: '0.5s' }}>
             <CardHeader>
-              <CardTitle className="text-green-600">Economic Activity Investments</CardTitle>
+              <CardTitle className="text-success flex items-center gap-2">
+                <div className="w-2 h-2 bg-success rounded-full"></div>
+                Economic Activity Investments
+              </CardTitle>
               <p className="text-sm text-muted-foreground">
                 €{economicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
               </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {economicActivityInvestments.map((investment) => (
-                  <div key={investment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{investment.name}</p>
-                      <p className="text-sm text-muted-foreground">{investment.category}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">€{investment.amount.toLocaleString()}</p>
-                      <p className={`text-sm ${investment.return > 0 ? 'text-green-600' : 'text-destructive'}`}>
-                        {investment.return > 0 ? '+' : ''}{investment.return}%
-                      </p>
+                {economicActivityInvestments.map((investment, index) => (
+                  <div key={investment.id} className="investment-card p-4 border border-border/50 rounded-lg hover:border-success/30 transition-all duration-300" style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-foreground">{investment.name}</p>
+                        <p className="text-sm text-muted-foreground">{investment.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
+                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
+                          {investment.return > 0 ? '+' : ''}{investment.return}%
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
@@ -171,26 +177,31 @@ const Dashboard = () => {
           </Card>
 
           {/* Non-Economic Activity Investments */}
-          <Card>
+          <Card className="investment-card slide-up" style={{ animationDelay: '0.6s' }}>
             <CardHeader>
-              <CardTitle className="text-muted-foreground">Non-Economic Activity Investments</CardTitle>
+              <CardTitle className="text-muted-foreground flex items-center gap-2">
+                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+                Non-Economic Activity Investments
+              </CardTitle>
               <p className="text-sm text-muted-foreground">
                 €{nonEconomicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
               </p>
             </CardHeader>
             <CardContent>
               <div className="space-y-3">
-                {nonEconomicActivityInvestments.map((investment) => (
-                  <div key={investment.id} className="flex items-center justify-between p-3 border rounded-lg">
-                    <div>
-                      <p className="font-medium">{investment.name}</p>
-                      <p className="text-sm text-muted-foreground">{investment.category}</p>
-                    </div>
-                    <div className="text-right">
-                      <p className="font-medium">€{investment.amount.toLocaleString()}</p>
-                      <p className={`text-sm ${investment.return > 0 ? 'text-green-600' : 'text-destructive'}`}>
-                        {investment.return > 0 ? '+' : ''}{investment.return}%
-                      </p>
+                {nonEconomicActivityInvestments.map((investment, index) => (
+                  <div key={investment.id} className="investment-card p-4 border border-border/50 rounded-lg hover:border-muted-foreground/30 transition-all duration-300" style={{ animationDelay: `${0.7 + index * 0.1}s` }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-foreground">{investment.name}</p>
+                        <p className="text-sm text-muted-foreground">{investment.category}</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
+                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
+                          {investment.return > 0 ? '+' : ''}{investment.return}%
+                        </p>
+                      </div>
                     </div>
                   </div>
                 ))}
