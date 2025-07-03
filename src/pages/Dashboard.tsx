@@ -1,7 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
 import { TrendingUp, TrendingDown, Activity, DollarSign } from "lucide-react";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const Dashboard = () => {
   // Mock data - will be replaced with Holded API data
@@ -52,14 +52,17 @@ const Dashboard = () => {
     <div className="min-h-screen bg-background p-6">
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between fade-in">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Investment Dashboard</h1>
-            <p className="text-muted-foreground">Track your portfolio and economic activity</p>
+            <h1 className="text-4xl font-bold text-foreground">Investment Dashboard</h1>
+            <p className="text-muted-foreground mt-1">Track your portfolio and economic activity</p>
           </div>
-          <Badge variant="secondary" className="text-sm">
-            Last updated: Today
-          </Badge>
+          <div className="flex items-center gap-4">
+            <Badge variant="secondary" className="text-sm">
+              Last updated: Today
+            </Badge>
+            <ThemeToggle />
+          </div>
         </div>
 
         {/* Overview Cards */}
@@ -112,34 +115,6 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
-
-        {/* Economic Activity Progress */}
-        <Card className="metric-card slide-up" style={{ animationDelay: '0.4s' }}>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-foreground">
-              <Activity className="h-5 w-5 text-primary" />
-              Economic Activity Progress
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex justify-between text-sm text-muted-foreground">
-                <span>Current: {economicActivityPercentage}%</span>
-                <span>Target: 55%</span>
-              </div>
-              <Progress 
-                value={economicActivityPercentage} 
-                className={`h-3 progress-bar ${isEconomicActivityLow ? 'text-destructive' : 'text-success'}`}
-              />
-              {isEconomicActivityLow && (
-                <p className="text-sm text-destructive flex items-center gap-2">
-                  <span className="w-2 h-2 bg-destructive rounded-full animate-pulse"></span>
-                  Economic activity percentage is below the 55% target
-                </p>
-              )}
-            </div>
-          </CardContent>
-        </Card>
 
         {/* Investment Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
