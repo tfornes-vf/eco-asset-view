@@ -184,6 +184,75 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Long and Short Term Investments */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Long Term Investments */}
+          <Card className="investment-card slide-up" style={{ animationDelay: '0.8s' }}>
+            <CardHeader>
+              <CardTitle className="text-primary flex items-center gap-2">
+                <div className="w-2 h-2 bg-primary rounded-full"></div>
+                Long Term Investments
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                €{investments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {investments.map((investment, index) => (
+                  <div key={`long-${investment.id}`} className="investment-card p-4 border border-border/50 rounded-lg hover:border-primary/30 transition-all duration-300" style={{ animationDelay: `${0.9 + index * 0.1}s` }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-foreground">{investment.name}</p>
+                        <p className="text-sm text-muted-foreground">{investment.category} • Long</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
+                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
+                          {investment.return > 0 ? '+' : ''}{investment.return}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Short Term Investments */}
+          <Card className="investment-card slide-up" style={{ animationDelay: '0.9s' }}>
+            <CardHeader>
+              <CardTitle className="text-warning flex items-center gap-2">
+                <div className="w-2 h-2 bg-warning rounded-full"></div>
+                Short Term Investments
+              </CardTitle>
+              <p className="text-sm text-muted-foreground">
+                €{investments.reduce((sum, inv) => sum + inv.amount * 0.3, 0).toLocaleString()}
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-3">
+                {investments.map((investment, index) => (
+                  <div key={`short-${investment.id}`} className="investment-card p-4 border border-border/50 rounded-lg hover:border-warning/30 transition-all duration-300" style={{ animationDelay: `${1.0 + index * 0.1}s` }}>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="font-semibold text-foreground">{investment.name}</p>
+                        <p className="text-sm text-muted-foreground">{investment.category} • Short</p>
+                      </div>
+                      <div className="text-right">
+                        <p className="font-bold text-foreground">€{Math.round(investment.amount * 0.3).toLocaleString()}</p>
+                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
+                          {investment.return > 0 ? '+' : ''}{(investment.return * 0.8).toFixed(1)}%
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
