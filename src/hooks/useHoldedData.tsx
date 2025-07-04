@@ -17,15 +17,13 @@ export const useHoldedData = () => {
         setLoading(true);
         setError(null);
 
-        // Call Supabase Edge Function
-        const response = await fetch('/api/holded-api', {
+        // Call Supabase Edge Function to sync Holded data
+        const response = await fetch('https://fldrdenuwinjymymfnmd.supabase.co/functions/v1/holded-sync', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            endpoint: 'documents' // You may need to adjust this based on Holded API endpoints
-          }),
+            'Authorization': `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZsZHJkZW51d2luanlteW1mbm1kIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTE2MjMwOTMsImV4cCI6MjA2NzE5OTA5M30.y4kzPXFK20_QMuxiSWrtlSPYStQSTr6qxjcX405CLVA`
+          }
         });
 
         if (!response.ok) {

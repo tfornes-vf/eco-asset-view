@@ -8,36 +8,33 @@ interface ChartData {
 }
 
 const CircularChart = () => {
-  // Sample data based on the uploaded image structure
+  // Data based on the Spanish investment chart structure
   const innerData: ChartData[] = [
-    { name: 'Directa', value: 47, color: 'hsl(var(--chart-1))', category: 'inner' },
-    { name: 'Indirecta', value: 51, color: 'hsl(var(--muted))', category: 'inner' },
-    { name: 'Efectivo', value: 2, color: 'hsl(var(--chart-3))', category: 'inner' }
+    { name: 'Directa', value: 47, color: 'hsl(25, 95%, 53%)', category: 'inner' },
+    { name: 'Indirecta', value: 51, color: 'hsl(210, 40%, 70%)', category: 'inner' },
+    { name: 'Efectivo', value: 2, color: 'hsl(210, 40%, 85%)', category: 'inner' }
   ];
 
   const middleData: ChartData[] = [
-    { name: 'Fondos de inversión', value: 26, color: 'hsl(var(--chart-1))', category: 'middle' },
-    { name: 'Fondos líquidos', value: 25, color: 'hsl(var(--chart-2))', category: 'middle' },
-    { name: 'Propiedades inmobiliarias', value: 22, color: 'hsl(var(--chart-3))', category: 'middle' },
-    { name: 'Valores negociables', value: 15, color: 'hsl(var(--chart-4))', category: 'middle' },
-    { name: 'Hedge funds', value: 10, color: 'hsl(var(--warning))', category: 'middle' },
-    { name: 'Otros', value: 2, color: 'hsl(var(--muted-foreground))', category: 'middle' }
+    { name: 'Fondos de inversión', value: 26, color: 'hsl(25, 95%, 53%)', category: 'middle' },
+    { name: 'Fondos líquidos', value: 25, color: 'hsl(25, 85%, 60%)', category: 'middle' },
+    { name: 'Propiedades inmobiliarias', value: 22, color: 'hsl(25, 75%, 65%)', category: 'middle' },
+    { name: 'Valores negociables', value: 15, color: 'hsl(25, 65%, 70%)', category: 'middle' },
+    { name: 'Hedge funds', value: 10, color: 'hsl(25, 55%, 75%)', category: 'middle' },
+    { name: 'Mixtos', value: 2, color: 'hsl(25, 45%, 80%)', category: 'middle' }
   ];
 
   const outerData: ChartData[] = [
-    { name: 'Renta fija', value: 13, color: 'hsl(var(--chart-1))', category: 'outer' },
-    { name: 'Private equity', value: 10, color: 'hsl(var(--chart-2))', category: 'outer' },
-    { name: 'Renta variable', value: 9, color: 'hsl(var(--chart-3))', category: 'outer' },
-    { name: 'Empresas no cotizadas', value: 6, color: 'hsl(var(--chart-4))', category: 'outer' },
-    { name: 'Private equity', value: 6, color: 'hsl(var(--warning))', category: 'outer' },
-    { name: 'Renta fija', value: 6, color: 'hsl(var(--success))', category: 'outer' },
-    { name: 'Commodities', value: 2, color: 'hsl(var(--destructive))', category: 'outer' },
-    { name: 'Venture capital', value: 6, color: 'hsl(var(--primary))', category: 'outer' },
-    { name: 'Deuda privada', value: 3, color: 'hsl(var(--secondary))', category: 'outer' },
-    { name: 'Infraestructura', value: 2, color: 'hsl(var(--accent))', category: 'outer' },
-    { name: 'Inmobiliario', value: 2, color: 'hsl(var(--muted))', category: 'outer' },
-    { name: 'Mixtos', value: 3, color: 'hsl(var(--card))', category: 'outer' },
-    { name: 'Obras de arte', value: 2, color: 'hsl(var(--border))', category: 'outer' }
+    { name: 'Renta fija', value: 13, color: 'hsl(25, 95%, 53%)', category: 'outer' },
+    { name: 'Private equity', value: 10, color: 'hsl(25, 85%, 58%)', category: 'outer' },
+    { name: 'Renta variable', value: 9, color: 'hsl(25, 75%, 63%)', category: 'outer' },
+    { name: 'Empresas no cotizadas y proyectos', value: 6, color: 'hsl(25, 65%, 68%)', category: 'outer' },
+    { name: 'Commodities', value: 6, color: 'hsl(25, 55%, 73%)', category: 'outer' },
+    { name: 'Venture capital', value: 6, color: 'hsl(25, 45%, 78%)', category: 'outer' },
+    { name: 'Deuda privada', value: 3, color: 'hsl(25, 35%, 83%)', category: 'outer' },
+    { name: 'Infraestructura', value: 2, color: 'hsl(25, 25%, 88%)', category: 'outer' },
+    { name: 'Inmobiliario', value: 2, color: 'hsl(25, 15%, 93%)', category: 'outer' },
+    { name: 'Obras de arte, joyas etc.', value: 2, color: 'hsl(210, 40%, 70%)', category: 'outer' }
   ];
 
   const CustomTooltip = ({ active, payload }: any) => {
@@ -108,13 +105,6 @@ const CircularChart = () => {
         </PieChart>
       </ResponsiveContainer>
       
-      {/* Center text */}
-      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="text-center">
-          <p className="text-sm text-muted-foreground">Portfolio</p>
-          <p className="text-lg font-bold text-foreground">Distribution</p>
-        </div>
-      </div>
     </div>
   );
 };
