@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Activity, DollarSign } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
+import CircularChart from "@/components/CircularChart";
 
 const Dashboard = () => {
   // Mock data - will be replaced with Holded API data
@@ -184,6 +185,20 @@ const Dashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Portfolio Distribution Chart */}
+        <Card className="investment-card slide-up" style={{ animationDelay: '0.4s' }}>
+          <CardHeader>
+            <CardTitle className="text-primary flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              Portfolio Distribution
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Investment allocation by strategy</p>
+          </CardHeader>
+          <CardContent>
+            <CircularChart />
+          </CardContent>
+        </Card>
 
         {/* Long and Short Term Investments */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
