@@ -3,51 +3,57 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Activity, DollarSign } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import CircularChart from "@/components/CircularChart";
+import { useHoldedData } from "@/hooks/useHoldedData";
 
 const Dashboard = () => {
-  // Mock data - will be replaced with Holded API data
-  const totalInvestments = 125000;
-  const economicActivityPercentage = 45; // This will determine red/green color
-  const totalReturn = 8.5;
+  const { data: holdedData, loading, error } = useHoldedData();
+
+  // Use real data from Holded API or fallback to defaults
+  const totalInvestments = holdedData?.metrics?.totalInvestments || 0;
+  const economicActivityPercentage = holdedData?.metrics?.economicActivityPercentage || 0;
+  const totalReturn = holdedData?.metrics?.totalReturn || 0;
+  const totalPositions = holdedData?.metrics?.totalPositions || 0;
   const isEconomicActivityLow = economicActivityPercentage < 55;
 
-  const investments = [
-    {
-      id: 1,
-      name: "Tech Startup A",
-      amount: 25000,
-      return: 12.3,
-      isEconomicActivity: true,
-      category: "Equity"
-    },
-    {
-      id: 2,
-      name: "Real Estate Fund",
-      amount: 45000,
-      return: 6.8,
-      isEconomicActivity: false,
-      category: "Real Estate"
-    },
-    {
-      id: 3,
-      name: "Manufacturing Co.",
-      amount: 30000,
-      return: 9.2,
-      isEconomicActivity: true,
-      category: "Industrial"
-    },
-    {
-      id: 4,
-      name: "Government Bonds",
-      amount: 25000,
-      return: 3.1,
-      isEconomicActivity: false,
-      category: "Fixed Income"
-    }
-  ];
+  // Transform Holded investments to match UI format
+  const investments = holdedData?.investments?.map(inv => ({
+    id: inv.external_id,
+    name: inv.name,
+    amount: inv.amount,
+    return: inv.return_percentage,
+    isEconomicActivity: inv.is_economic_activity,
+    category: inv.category
+  })) || [];
 
   const economicActivityInvestments = investments.filter(inv => inv.isEconomicActivity);
   const nonEconomicActivityInvestments = investments.filter(inv => !inv.isEconomicActivity);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
+          <p className="mt-4 text-muted-foreground">Loading investment data...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-destructive">Error loading data: {error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
+          >
+            Retry
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background p-6">
@@ -111,7 +117,7 @@ const Dashboard = () => {
               <TrendingUp className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
-              <div className="text-3xl font-bold text-foreground">{investments.length}</div>
+              <div className="text-3xl font-bold text-foreground">{totalPositions}</div>
               <p className="text-xs text-muted-foreground mt-1">Active positions</p>
             </CardContent>
           </Card>

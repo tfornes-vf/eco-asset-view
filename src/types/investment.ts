@@ -1,14 +1,15 @@
 export interface Investment {
-  id: string;
+  external_id: string;
   name: string;
   amount: number;
-  return: number;
-  isEconomicActivity: boolean;
+  return_percentage: number;
+  is_economic_activity: boolean;
   category: string;
-  accountCode?: string;
+  account_code?: string;
   description?: string;
-  dateCreated?: string;
-  lastUpdated?: string;
+  investment_type?: string;
+  sub_category?: string;
+  detail_category?: string;
 }
 
 export interface HoldedApiResponse {
