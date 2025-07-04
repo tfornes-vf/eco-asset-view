@@ -123,6 +123,23 @@ const Dashboard = () => {
           </Card>
         </div>
 
+        {/* Portfolio Distribution Chart - moved to top */}
+        <Card className="investment-card slide-up" style={{ animationDelay: '0.4s' }}>
+          <CardHeader>
+            <CardTitle className="text-success flex items-center gap-2">
+              <div className="w-2 h-2 bg-success rounded-full"></div>
+              Distribución de Inversiones por Actividad Económica
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">Estrategia de ponderación de activos a medio plazo</p>
+          </CardHeader>
+          <CardContent>
+            <CircularChart 
+              economicActivityPercentage={economicActivityPercentage}
+              totalInvestments={totalInvestments}
+            />
+          </CardContent>
+        </Card>
+
         {/* Investment Breakdown */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Economic Activity Investments */}
@@ -192,21 +209,6 @@ const Dashboard = () => {
           </Card>
         </div>
 
-        {/* Portfolio Distribution Chart - moved above breakdown */}
-        <Card className="investment-card slide-up" style={{ animationDelay: '0.4s' }}>
-          <CardHeader>
-            <CardTitle className="text-success flex items-center gap-2">
-              <div className="w-2 h-2 bg-success rounded-full"></div>
-              Distribución de Inversiones por Actividad Económica
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">Estrategia de ponderación de activos a medio plazo</p>
-          </CardHeader>
-          <CardContent>
-            <CircularChart />
-          </CardContent>
-        </Card>
-
-        {/* Long and Short Term Investments */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Long Term Investments */}
           <Card className="investment-card slide-up" style={{ animationDelay: '0.8s' }}>

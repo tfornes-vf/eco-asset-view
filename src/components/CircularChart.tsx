@@ -1,4 +1,9 @@
-import { PieChart, Pie, Cell, ResponsiveContainer, Legend, Tooltip } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
+
+interface CircularChartProps {
+  economicActivityPercentage: number;
+  totalInvestments: number;
+}
 
 interface ChartData {
   name: string;
@@ -7,7 +12,7 @@ interface ChartData {
   category: 'inner' | 'middle' | 'outer';
 }
 
-const CircularChart = () => {
+const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentage, totalInvestments }) => {
   // Data based on the Spanish investment chart structure
   const innerData: ChartData[] = [
     { name: 'Directa', value: 47, color: 'hsl(25, 95%, 53%)', category: 'inner' },
@@ -37,20 +42,34 @@ const CircularChart = () => {
     { name: 'Obras de arte, joyas etc.', value: 2, color: 'hsl(210, 40%, 70%)', category: 'outer' }
   ];
 
-  const CustomTooltip = ({ active, payload }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-card border border-border rounded-lg p-3 shadow-lg">
-          <p className="text-foreground font-medium">{payload[0].name}</p>
-          <p className="text-primary">{payload[0].value}%</p>
-        </div>
-      );
-    }
-    return null;
+  const renderCustomLabel = (entry: any, radius: number) => {
+    const RADIAN = Math.PI / 180;
+    const midAngle = (entry.startAngle + entry.endAngle) / 2;
+    const x = entry.cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = entry.cy + radius * Math.sin(-midAngle * RADIAN);
+
+    if (entry.value < 5) return null; // Don't show labels for small segments
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="hsl(var(--foreground))" 
+        textAnchor={x > entry.cx ? 'start' : 'end'} 
+        dominantBaseline="central"
+        fontSize="11"
+        fontWeight="500"
+      >
+        {`${entry.name} ${entry.value}%`}
+      </text>
+    );
   };
 
+  const economicAmount = (totalInvestments * economicActivityPercentage) / 100;
+  const nonEconomicAmount = totalInvestments - economicAmount;
+
   return (
-    <div className="w-full h-[400px] relative">
+    <div className="w-full h-[450px] relative">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
           {/* Inner ring */}
@@ -63,6 +82,7 @@ const CircularChart = () => {
             dataKey="value"
             startAngle={90}
             endAngle={450}
+            label={(entry) => renderCustomLabel(entry, 80)}
           >
             {innerData.map((entry, index) => (
               <Cell key={`inner-cell-${index}`} fill={entry.color} />
@@ -79,6 +99,7 @@ const CircularChart = () => {
             dataKey="value"
             startAngle={90}
             endAngle={450}
+            label={(entry) => renderCustomLabel(entry, 130)}
           >
             {middleData.map((entry, index) => (
               <Cell key={`middle-cell-${index}`} fill={entry.color} />
@@ -95,16 +116,37 @@ const CircularChart = () => {
             dataKey="value"
             startAngle={90}
             endAngle={450}
+            label={(entry) => renderCustomLabel(entry, 180)}
           >
             {outerData.map((entry, index) => (
               <Cell key={`outer-cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
-          
-          <Tooltip content={<CustomTooltip />} />
         </PieChart>
       </ResponsiveContainer>
       
+      {/* Center Stats Display */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="text-center bg-background/80 backdrop-blur-sm rounded-lg p-4 border border-border/50">
+          <div className="space-y-2">
+            <div className="flex items-center gap-2">
+              <div className="w-3 h-3 bg-success rounded-full"></div>
+              <span className="text-sm font-medium text-foreground">Actividad Económica</span>
+            </div>
+            <div className="text-lg font-bold text-success">{economicActivityPercentage}%</div>
+            <div className="text-xs text-muted-foreground">€{economicAmount.toLocaleString()}</div>
+            
+            <div className="border-t border-border/50 pt-2">
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 bg-muted-foreground rounded-full"></div>
+                <span className="text-sm font-medium text-foreground">No Económica</span>
+              </div>
+              <div className="text-lg font-bold text-muted-foreground">{(100 - economicActivityPercentage).toFixed(1)}%</div>
+              <div className="text-xs text-muted-foreground">€{nonEconomicAmount.toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
