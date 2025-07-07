@@ -42,13 +42,13 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
     { name: 'Obras de arte, joyas etc.', value: 2, color: 'hsl(210, 40%, 70%)', category: 'outer' }
   ];
 
-  const renderCustomLabel = (entry: any, radius: number) => {
+  const renderMiddleLabel = (entry: any, radius: number) => {
     const RADIAN = Math.PI / 180;
     const midAngle = (entry.startAngle + entry.endAngle) / 2;
     const x = entry.cx + radius * Math.cos(-midAngle * RADIAN);
     const y = entry.cy + radius * Math.sin(-midAngle * RADIAN);
 
-    if (entry.value < 5) return null; // Don't show labels for small segments
+    if (entry.value < 3) return null; // Don't show labels for very small segments
 
     return (
       <text 
@@ -57,66 +57,149 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
         fill="hsl(var(--foreground))" 
         textAnchor={x > entry.cx ? 'start' : 'end'} 
         dominantBaseline="central"
-        fontSize="11"
+        fontSize="10"
         fontWeight="500"
       >
-        {`${entry.name} ${entry.value}%`}
+        {entry.name}
       </text>
+    );
+  };
+
+  const renderMiddlePercentage = (entry: any, innerRadius: number, outerRadius: number) => {
+    const RADIAN = Math.PI / 180;
+    const midAngle = (entry.startAngle + entry.endAngle) / 2;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const x = entry.cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = entry.cy + radius * Math.sin(-midAngle * RADIAN);
+
+    if (entry.value < 3) return null;
+
+    return (
+      <text 
+        x={x} 
+        y={y} 
+        fill="hsl(var(--foreground))" 
+        textAnchor="middle" 
+        dominantBaseline="central"
+        fontSize="9"
+        fontWeight="600"
+      >
+        {`${entry.value}%`}
+      </text>
+    );
+  };
+
+  const renderOuterLabel = (entry: any, radius: number) => {
+    const RADIAN = Math.PI / 180;
+    const midAngle = (entry.startAngle + entry.endAngle) / 2;
+    const x = entry.cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = entry.cy + radius * Math.sin(-midAngle * RADIAN);
+    
+    // Line end points
+    const lineEndX = entry.cx + (radius + 20) * Math.cos(-midAngle * RADIAN);
+    const lineEndY = entry.cy + (radius + 20) * Math.sin(-midAngle * RADIAN);
+    
+    // Text position
+    const textX = entry.cx + (radius + 30) * Math.cos(-midAngle * RADIAN);
+    const textY = entry.cy + (radius + 30) * Math.sin(-midAngle * RADIAN);
+
+    if (entry.value < 2) return null;
+
+    return (
+      <g>
+        {/* White line */}
+        <line 
+          x1={x} 
+          y1={y} 
+          x2={lineEndX} 
+          y2={lineEndY} 
+          stroke="hsl(var(--border))" 
+          strokeWidth="1"
+        />
+        {/* Label */}
+        <text 
+          x={textX} 
+          y={textY} 
+          fill="hsl(var(--foreground))" 
+          textAnchor={textX > entry.cx ? 'start' : 'end'} 
+          dominantBaseline="central"
+          fontSize="9"
+          fontWeight="500"
+          className="drop-shadow-sm"
+        >
+          {`${entry.name} ${entry.value}%`}
+        </text>
+      </g>
     );
   };
 
   const economicAmount = (totalInvestments * economicActivityPercentage) / 100;
   const nonEconomicAmount = totalInvestments - economicAmount;
 
+  // Create center data for inner ring
+  const centerData = [
+    { 
+      name: 'Actividad Económica', 
+      value: economicActivityPercentage, 
+      color: 'hsl(var(--success))',
+      amount: economicAmount
+    },
+    { 
+      name: 'No Económica', 
+      value: 100 - economicActivityPercentage, 
+      color: 'hsl(var(--muted-foreground))',
+      amount: nonEconomicAmount
+    }
+  ];
+
   return (
-    <div className="w-full h-[450px] relative">
+    <div className="w-full h-[500px] relative">
       <ResponsiveContainer width="100%" height="100%">
         <PieChart>
-          {/* Inner ring */}
+          {/* Level 1 - Center ring (Economic Activity) */}
           <Pie
-            data={innerData}
+            data={centerData}
             cx="50%"
             cy="50%"
             innerRadius={0}
-            outerRadius={60}
+            outerRadius={50}
             dataKey="value"
             startAngle={90}
             endAngle={450}
-            label={(entry) => renderCustomLabel(entry, 80)}
           >
-            {innerData.map((entry, index) => (
-              <Cell key={`inner-cell-${index}`} fill={entry.color} />
+            {centerData.map((entry, index) => (
+              <Cell key={`center-cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           
-          {/* Middle ring */}
+          {/* Level 2 - Middle ring */}
           <Pie
             data={middleData}
             cx="50%"
             cy="50%"
-            innerRadius={70}
-            outerRadius={110}
+            innerRadius={60}
+            outerRadius={100}
             dataKey="value"
             startAngle={90}
             endAngle={450}
-            label={(entry) => renderCustomLabel(entry, 130)}
+            label={(entry) => renderMiddleLabel(entry, 115)}
           >
             {middleData.map((entry, index) => (
               <Cell key={`middle-cell-${index}`} fill={entry.color} />
             ))}
           </Pie>
           
-          {/* Outer ring */}
+          {/* Level 3 - Outer ring */}
           <Pie
             data={outerData}
             cx="50%"
             cy="50%"
-            innerRadius={120}
-            outerRadius={160}
+            innerRadius={110}
+            outerRadius={150}
             dataKey="value"
             startAngle={90}
             endAngle={450}
-            label={(entry) => renderCustomLabel(entry, 180)}
+            label={(entry) => renderOuterLabel(entry, 150)}
           >
             {outerData.map((entry, index) => (
               <Cell key={`outer-cell-${index}`} fill={entry.color} />
@@ -124,26 +207,57 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
           </Pie>
         </PieChart>
       </ResponsiveContainer>
+
+      {/* Level 2 Percentages */}
+      <div className="absolute inset-0 pointer-events-none">
+        <svg className="w-full h-full">
+          {middleData.map((entry, index) => {
+            const angle = (entry.value / 100) * 360;
+            const startAngle = middleData.slice(0, index).reduce((sum, item) => sum + (item.value / 100) * 360, 0) + 90;
+            const midAngle = startAngle + angle / 2;
+            const RADIAN = Math.PI / 180;
+            const cx = 250; // Center X (assuming 500px width)
+            const cy = 250; // Center Y (assuming 500px height)
+            const radius = 80; // Middle point of level 2 ring
+            const x = cx + radius * Math.cos(-midAngle * RADIAN);
+            const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+            if (entry.value < 3) return null;
+
+            return (
+              <text 
+                key={`middle-percent-${index}`}
+                x={x} 
+                y={y} 
+                fill="hsl(var(--foreground))" 
+                textAnchor="middle" 
+                dominantBaseline="central"
+                fontSize="9"
+                fontWeight="600"
+                className="drop-shadow-sm"
+              >
+                {`${entry.value}%`}
+              </text>
+            );
+          })}
+        </svg>
+      </div>
       
       {/* Center Stats Display */}
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="text-center bg-background/80 backdrop-blur-sm rounded-lg p-4 border border-border/50">
-          <div className="space-y-2">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 bg-success rounded-full"></div>
-              <span className="text-sm font-medium text-foreground">Actividad Económica</span>
+        <div className="text-center">
+          <div className="grid grid-cols-1 gap-1 text-xs">
+            <div className="flex items-center justify-center gap-1">
+              <div className="w-2 h-2 bg-success rounded-full"></div>
+              <span className="text-success font-medium">{economicActivityPercentage}%</span>
             </div>
-            <div className="text-lg font-bold text-success">{economicActivityPercentage}%</div>
-            <div className="text-xs text-muted-foreground">€{economicAmount.toLocaleString()}</div>
+            <div className="text-xs text-success">€{economicAmount.toLocaleString()}</div>
             
-            <div className="border-t border-border/50 pt-2">
-              <div className="flex items-center gap-2">
-                <div className="w-3 h-3 bg-muted-foreground rounded-full"></div>
-                <span className="text-sm font-medium text-foreground">No Económica</span>
-              </div>
-              <div className="text-lg font-bold text-muted-foreground">{(100 - economicActivityPercentage).toFixed(1)}%</div>
-              <div className="text-xs text-muted-foreground">€{nonEconomicAmount.toLocaleString()}</div>
+            <div className="flex items-center justify-center gap-1 mt-1">
+              <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
+              <span className="text-muted-foreground font-medium">{(100 - economicActivityPercentage).toFixed(1)}%</span>
             </div>
+            <div className="text-xs text-muted-foreground">€{nonEconomicAmount.toLocaleString()}</div>
           </div>
         </div>
       </div>

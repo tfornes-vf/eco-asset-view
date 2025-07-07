@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, Activity, DollarSign } from "lucide-react";
 import ThemeToggle from "@/components/ThemeToggle";
 import CircularChart from "@/components/CircularChart";
+import CategorySummary from "@/components/CategorySummary";
 import { useHoldedData } from "@/hooks/useHoldedData";
 
 const Dashboard = () => {
@@ -28,12 +29,38 @@ const Dashboard = () => {
   const economicActivityInvestments = investments.filter(inv => inv.isEconomicActivity);
   const nonEconomicActivityInvestments = investments.filter(inv => !inv.isEconomicActivity);
 
+  // Group investments by category
+  const categoryGroups = investments.reduce((groups, investment) => {
+    const category = investment.category;
+    if (!groups[category]) {
+      groups[category] = {
+        name: category,
+        economicCount: 0,
+        nonEconomicCount: 0,
+        economicTotal: 0,
+        nonEconomicTotal: 0
+      };
+    }
+    
+    if (investment.isEconomicActivity) {
+      groups[category].economicCount += 1;
+      groups[category].economicTotal += investment.amount;
+    } else {
+      groups[category].nonEconomicCount += 1;
+      groups[category].nonEconomicTotal += investment.amount;
+    }
+    
+    return groups;
+  }, {} as Record<string, any>);
+
+  const categories = Object.values(categoryGroups);
+
   if (loading) {
     return (
       <div className="min-h-screen bg-background p-6 flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Loading investment data...</p>
+          <p className="mt-4 text-muted-foreground">Cargando datos de inversión...</p>
         </div>
       </div>
     );
@@ -43,12 +70,12 @@ const Dashboard = () => {
     return (
       <div className="min-h-screen bg-background p-6 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-destructive">Error loading data: {error}</p>
+          <p className="text-destructive">Error al cargar los datos: {error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded hover:bg-primary/90"
           >
-            Retry
+            Reintentar
           </button>
         </div>
       </div>
@@ -61,12 +88,12 @@ const Dashboard = () => {
         {/* Header */}
         <div className="flex items-center justify-between fade-in">
           <div>
-            <h1 className="text-4xl font-bold text-foreground">Investment Dashboard</h1>
-            <p className="text-muted-foreground mt-1">Track your portfolio and economic activity</p>
+            <h1 className="text-4xl font-bold text-foreground">Panel de Inversiones</h1>
+            <p className="text-muted-foreground mt-1">Gestiona tu portafolio y actividad económica</p>
           </div>
           <div className="flex items-center gap-4">
             <Badge variant="secondary" className="text-sm">
-              Last updated: Today
+              Última actualización: Hoy
             </Badge>
             <ThemeToggle />
           </div>
@@ -76,29 +103,29 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           <Card className="metric-card fade-in">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Portfolio</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Portafolio Total</CardTitle>
               <DollarSign className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">€{totalInvestments.toLocaleString()}</div>
-              <p className="text-xs text-success mt-1">+2.1% from last month</p>
+              <p className="text-xs text-success mt-1">+2.1% del mes pasado</p>
             </CardContent>
           </Card>
 
           <Card className="metric-card fade-in" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Total Return</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Retorno Total</CardTitle>
               <TrendingUp className="h-5 w-5 text-success" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-success">+{totalReturn}%</div>
-              <p className="text-xs text-muted-foreground mt-1">Annualized return</p>
+              <p className="text-xs text-muted-foreground mt-1">Retorno anualizado</p>
             </CardContent>
           </Card>
 
           <Card className="metric-card fade-in" style={{ animationDelay: '0.2s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Economic Activity</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Actividad Económica</CardTitle>
               <Activity className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
@@ -106,19 +133,19 @@ const Dashboard = () => {
                 {economicActivityPercentage}%
               </div>
               <p className={`text-xs mt-1 ${isEconomicActivityLow ? 'text-destructive' : 'text-muted-foreground'}`}>
-                {isEconomicActivityLow ? 'Below target (55%)' : 'Above target'}
+                {isEconomicActivityLow ? 'Por debajo del objetivo (55%)' : 'Por encima del objetivo'}
               </p>
             </CardContent>
           </Card>
 
           <Card className="metric-card fade-in" style={{ animationDelay: '0.3s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Investments</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">Inversiones</CardTitle>
               <TrendingUp className="h-5 w-5 text-primary" />
             </CardHeader>
             <CardContent>
               <div className="text-3xl font-bold text-foreground">{totalPositions}</div>
-              <p className="text-xs text-muted-foreground mt-1">Active positions</p>
+              <p className="text-xs text-muted-foreground mt-1">Posiciones activas</p>
             </CardContent>
           </Card>
         </div>
@@ -140,142 +167,21 @@ const Dashboard = () => {
           </CardContent>
         </Card>
 
-        {/* Investment Breakdown */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Economic Activity Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.5s' }}>
-            <CardHeader>
-              <CardTitle className="text-success flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                Economic Activity Investments
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{economicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {economicActivityInvestments.map((investment, index) => (
-                  <div key={investment.id} className="investment-card p-4 border border-border/50 rounded-lg hover:border-success/30 transition-all duration-300" style={{ animationDelay: `${0.6 + index * 0.1}s` }}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground">{investment.name}</p>
-                        <p className="text-sm text-muted-foreground">{investment.category}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
-                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
-                          {investment.return > 0 ? '+' : ''}{investment.return}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Non-Economic Activity Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.6s' }}>
-            <CardHeader>
-              <CardTitle className="text-muted-foreground flex items-center gap-2">
-                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                Non-Economic Activity Investments
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{nonEconomicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {nonEconomicActivityInvestments.map((investment, index) => (
-                  <div key={investment.id} className="investment-card p-4 border border-border/50 rounded-lg hover:border-muted-foreground/30 transition-all duration-300" style={{ animationDelay: `${0.7 + index * 0.1}s` }}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground">{investment.name}</p>
-                        <p className="text-sm text-muted-foreground">{investment.category}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
-                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
-                          {investment.return > 0 ? '+' : ''}{investment.return}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Long Term Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.8s' }}>
-            <CardHeader>
-              <CardTitle className="text-primary flex items-center gap-2">
-                <div className="w-2 h-2 bg-primary rounded-full"></div>
-                Long Term Investments
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{investments.reduce((sum, inv) => sum + inv.amount, 0).toLocaleString()}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {investments.map((investment, index) => (
-                  <div key={`long-${investment.id}`} className="investment-card p-4 border border-border/50 rounded-lg hover:border-primary/30 transition-all duration-300" style={{ animationDelay: `${0.9 + index * 0.1}s` }}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground">{investment.name}</p>
-                        <p className="text-sm text-muted-foreground">{investment.category} • Long</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground">€{investment.amount.toLocaleString()}</p>
-                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
-                          {investment.return > 0 ? '+' : ''}{investment.return}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Short Term Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.9s' }}>
-            <CardHeader>
-              <CardTitle className="text-warning flex items-center gap-2">
-                <div className="w-2 h-2 bg-warning rounded-full"></div>
-                Short Term Investments
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{investments.reduce((sum, inv) => sum + inv.amount * 0.3, 0).toLocaleString()}
-              </p>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                {investments.map((investment, index) => (
-                  <div key={`short-${investment.id}`} className="investment-card p-4 border border-border/50 rounded-lg hover:border-warning/30 transition-all duration-300" style={{ animationDelay: `${1.0 + index * 0.1}s` }}>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <p className="font-semibold text-foreground">{investment.name}</p>
-                        <p className="text-sm text-muted-foreground">{investment.category} • Short</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="font-bold text-foreground">€{Math.round(investment.amount * 0.3).toLocaleString()}</p>
-                        <p className={`text-sm font-medium ${investment.return > 0 ? 'text-success' : 'text-destructive'}`}>
-                          {investment.return > 0 ? '+' : ''}{(investment.return * 0.8).toFixed(1)}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        {/* Categories Summary */}
+        <Card className="investment-card slide-up" style={{ animationDelay: '0.5s' }}>
+          <CardHeader>
+            <CardTitle className="text-primary flex items-center gap-2">
+              <div className="w-2 h-2 bg-primary rounded-full"></div>
+              Inversiones por Categoría
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Haz clic en una categoría para ver sus detalles
+            </p>
+          </CardHeader>
+          <CardContent>
+            <CategorySummary categories={categories} />
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
