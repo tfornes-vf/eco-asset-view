@@ -1,14 +1,22 @@
-import { useParams, Link } from "react-router-dom";
-import { ArrowLeft } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useHoldedData } from "@/hooks/useHoldedData";
-import InvestmentList from "@/components/InvestmentList";
-import ThemeToggle from "@/components/ThemeToggle";
+import React from 'react';
+import { useParams } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { supabase } from '@/integrations/supabase/client';
+import { Investment } from '@/types/investment';
+import InvestmentList from '@/components/InvestmentList';
+import { useLanguage } from '@/contexts/LanguageContext';
 
 const CategoryDetails = () => {
   const { category } = useParams<{ category: string }>();
+  const { t } = useLanguage();
+
+  // Function to format category names (replace underscores with spaces)
+  const formatCategoryName = (categoryName: string) => {
+    return categoryName.replace(/_/g, ' ');
+  };
   const { data: holdedData, loading, error } = useHoldedData();
 
   if (loading) {
