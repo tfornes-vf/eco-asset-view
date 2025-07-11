@@ -57,8 +57,15 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
         fill="hsl(var(--foreground))" 
         textAnchor={x > entry.cx ? 'start' : 'end'} 
         dominantBaseline="central"
-        fontSize="10"
-        fontWeight="500"
+        fontSize="11"
+        fontWeight="600"
+        className="drop-shadow-md"
+        style={{
+          filter: 'drop-shadow(1px 1px 2px hsl(var(--background)))',
+          stroke: 'hsl(var(--background))',
+          strokeWidth: '0.5px',
+          paintOrder: 'stroke fill'
+        }}
       >
         {entry.name}
       </text>
@@ -96,36 +103,42 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
     const y = entry.cy + radius * Math.sin(-midAngle * RADIAN);
     
     // Line end points
-    const lineEndX = entry.cx + (radius + 20) * Math.cos(-midAngle * RADIAN);
-    const lineEndY = entry.cy + (radius + 20) * Math.sin(-midAngle * RADIAN);
+    const lineEndX = entry.cx + (radius + 25) * Math.cos(-midAngle * RADIAN);
+    const lineEndY = entry.cy + (radius + 25) * Math.sin(-midAngle * RADIAN);
     
     // Text position
-    const textX = entry.cx + (radius + 30) * Math.cos(-midAngle * RADIAN);
-    const textY = entry.cy + (radius + 30) * Math.sin(-midAngle * RADIAN);
+    const textX = entry.cx + (radius + 35) * Math.cos(-midAngle * RADIAN);
+    const textY = entry.cy + (radius + 35) * Math.sin(-midAngle * RADIAN);
 
     if (entry.value < 2) return null;
 
     return (
       <g>
-        {/* White line */}
+        {/* Connection line with better contrast */}
         <line 
           x1={x} 
           y1={y} 
           x2={lineEndX} 
           y2={lineEndY} 
-          stroke="hsl(var(--border))" 
-          strokeWidth="1"
+          stroke="hsl(var(--foreground))" 
+          strokeWidth="1.5"
+          opacity="0.7"
         />
-        {/* Label */}
+        {/* Label with better contrast */}
         <text 
           x={textX} 
           y={textY} 
           fill="hsl(var(--foreground))" 
           textAnchor={textX > entry.cx ? 'start' : 'end'} 
           dominantBaseline="central"
-          fontSize="9"
-          fontWeight="500"
-          className="drop-shadow-sm"
+          fontSize="10"
+          fontWeight="600"
+          style={{
+            filter: 'drop-shadow(1px 1px 2px hsl(var(--background)))',
+            stroke: 'hsl(var(--background))',
+            strokeWidth: '0.5px',
+            paintOrder: 'stroke fill'
+          }}
         >
           {`${entry.name} ${entry.value}%`}
         </text>
@@ -232,9 +245,14 @@ const CircularChart: React.FC<CircularChartProps> = ({ economicActivityPercentag
                 fill="hsl(var(--foreground))" 
                 textAnchor="middle" 
                 dominantBaseline="central"
-                fontSize="9"
-                fontWeight="600"
-                className="drop-shadow-sm"
+                fontSize="10"
+                fontWeight="700"
+                style={{
+                  filter: 'drop-shadow(1px 1px 3px hsl(var(--background)))',
+                  stroke: 'hsl(var(--background))',
+                  strokeWidth: '0.8px',
+                  paintOrder: 'stroke fill'
+                }}
               >
                 {`${entry.value}%`}
               </text>
