@@ -96,7 +96,10 @@ const Dashboard = () => {
         {/* Circular Chart */}
         <div className="flex justify-center mb-8">
           <div className="w-full max-w-4xl">
-            <CircularChart investments={investments || []} />
+            <CircularChart 
+              economicActivityPercentage={totalAmount > 0 ? (economicAmount / totalAmount) * 100 : 0}
+              totalInvestments={totalAmount}
+            />
           </div>
         </div>
 

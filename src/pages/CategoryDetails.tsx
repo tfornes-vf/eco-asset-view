@@ -2,12 +2,16 @@ import React from 'react';
 import { useParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/integrations/supabase/client';
 import { Investment } from '@/types/investment';
 import InvestmentList from '@/components/InvestmentList';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useHoldedData } from '@/hooks/useHoldedData';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const CategoryDetails = () => {
   const { category } = useParams<{ category: string }>();
@@ -46,21 +50,14 @@ const CategoryDetails = () => {
     );
   }
 
-  const investments = holdedData?.investments?.map(inv => ({
-    id: inv.external_id,
-    name: inv.name,
-    amount: inv.amount,
-    return: inv.return_percentage,
-    isEconomicActivity: inv.is_economic_activity,
-    category: inv.category
-  })) || [];
+  const investments = holdedData?.investments || [];
 
   const categoryInvestments = investments.filter(inv => 
     inv.category.toLowerCase() === category?.toLowerCase()
   );
 
-  const economicActivityInvestments = categoryInvestments.filter(inv => inv.isEconomicActivity);
-  const nonEconomicActivityInvestments = categoryInvestments.filter(inv => !inv.isEconomicActivity);
+  const economicActivityInvestments = categoryInvestments.filter(inv => inv.is_economic_activity);
+  const nonEconomicActivityInvestments = categoryInvestments.filter(inv => !inv.is_economic_activity);
 
   const economicTotal = economicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0);
   const nonEconomicTotal = nonEconomicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0);
