@@ -1,150 +1,101 @@
-import React from 'react';
-import { useParams } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
+import React, { useMemo } from 'react';
+import { useParams, Link } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLeft } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { Investment } from '@/types/investment';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import InvestmentList from '@/components/InvestmentList';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useHoldedData } from '@/hooks/useHoldedData';
-import ThemeToggle from '@/components/ThemeToggle';
 
 const CategoryDetails = () => {
   const { category } = useParams<{ category: string }>();
   const { t } = useLanguage();
+  const { data, loading, error } = useHoldedData();
 
-  // Function to format category names (replace underscores with spaces)
-  const formatCategoryName = (categoryName: string) => {
-    return categoryName.replace(/_/g, ' ');
-  };
-  const { data: holdedData, loading, error } = useHoldedData();
+  const categoryData = useMemo(() => {
+    if (!data?.investments || !category) return null;
+
+    const decodedCategory = decodeURIComponent(category);
+    const categoryInvestments = data.investments.filter(
+      inv => inv.category === decodedCategory
+    );
+
+    const totalAmount = categoryInvestments.reduce((sum, inv) => sum + inv.amount, 0);
+    const averageReturn = categoryInvestments.length 
+      ? categoryInvestments.reduce((sum, inv) => sum + inv.return_percentage, 0) / categoryInvestments.length 
+      : 0;
+
+    return {
+      investments: categoryInvestments,
+      totalAmount,
+      averageReturn,
+      count: categoryInvestments.length,
+      categoryName: decodedCategory
+    };
+  }, [data?.investments, category]);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary"></div>
-          <p className="mt-4 text-muted-foreground">Cargando datos de inversión...</p>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
       </div>
     );
   }
 
-  if (error) {
+  if (error || !categoryData) {
     return (
-      <div className="min-h-screen bg-background p-6 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-destructive">Error al cargar los datos: {error}</p>
-          <Button 
-            onClick={() => window.location.reload()} 
-            className="mt-4"
-          >
-            Reintentar
-          </Button>
-        </div>
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <p className="text-destructive">Error al cargar los datos</p>
       </div>
     );
   }
-
-  const investments = holdedData?.investments || [];
-
-  const categoryInvestments = investments.filter(inv => 
-    inv.category.toLowerCase() === category?.toLowerCase()
-  );
-
-  const economicActivityInvestments = categoryInvestments.filter(inv => inv.is_economic_activity);
-  const nonEconomicActivityInvestments = categoryInvestments.filter(inv => !inv.is_economic_activity);
-
-  const economicTotal = economicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0);
-  const nonEconomicTotal = nonEconomicActivityInvestments.reduce((sum, inv) => sum + inv.amount, 0);
 
   return (
-    <div className="min-h-screen bg-background p-6">
-      <div className="max-w-7xl mx-auto space-y-6">
-        {/* Header */}
-        <div className="flex items-center justify-between fade-in">
-          <div className="flex items-center gap-4">
-            <Link to="/">
-              <Button variant="outline" size="sm" className="flex items-center gap-2">
-                <ArrowLeft className="h-4 w-4" />
-                Volver al Dashboard
-              </Button>
+    <div className="min-h-screen bg-background text-foreground p-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="flex items-center gap-4 mb-6">
+          <Button variant="ghost" size="sm" asChild>
+            <Link to="/" className="flex items-center gap-2">
+              <ChevronLeft className="w-4 h-4" />
+              {t('nav.back')}
             </Link>
-            <div>
-              <h1 className="text-4xl font-bold text-foreground capitalize">{category}</h1>
-              <p className="text-muted-foreground mt-1">
-                Inversiones en {category} - {categoryInvestments.length} posiciones
-              </p>
-            </div>
-          </div>
-          <div className="flex items-center gap-4">
-            <Badge variant="secondary" className="text-sm">
-              Total: €{(economicTotal + nonEconomicTotal).toLocaleString()}
-            </Badge>
-            <ThemeToggle />
-          </div>
+          </Button>
         </div>
 
-        {/* Filter Space - Preparado para el futuro */}
-        <Card className="fade-in" style={{ animationDelay: '0.1s' }}>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-between">
-              <p className="text-sm text-muted-foreground">
-                Espacio reservado para filtros y buscador
-              </p>
-              <div className="flex gap-2">
-                <Badge variant="outline">
-                  Actividad Económica: {economicActivityInvestments.length}
-                </Badge>
-                <Badge variant="outline">
-                  No Económica: {nonEconomicActivityInvestments.length}
-                </Badge>
+        <Card className="mb-6">
+          <CardHeader>
+            <CardTitle className="text-2xl capitalize">
+              {t('category.details')} {categoryData.categoryName}
+            </CardTitle>
+            <CardDescription>
+              <Badge variant="secondary">
+                {categoryData.count} {t('category.totalElements')}
+              </Badge>
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">{t('category.totalAmount')}</p>
+                <p className="text-2xl font-bold">
+                  €{categoryData.totalAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
+                </p>
+              </div>
+              <div>
+                <p className="text-sm text-muted-foreground mb-1">{t('dashboard.totalReturn')}</p>
+                <p className="text-2xl font-bold">
+                  {categoryData.averageReturn.toFixed(2)}%
+                </p>
               </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Investment Breakdown */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Economic Activity Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.2s' }}>
-            <CardHeader>
-              <CardTitle className="text-success flex items-center gap-2">
-                <div className="w-2 h-2 bg-success rounded-full"></div>
-                Inversiones de Actividad Económica
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{economicTotal.toLocaleString()} • {economicActivityInvestments.length} posiciones
-              </p>
-            </CardHeader>
-            <CardContent>
-              <InvestmentList investments={economicActivityInvestments} />
-            </CardContent>
-          </Card>
-
-          {/* Non-Economic Activity Investments */}
-          <Card className="investment-card slide-up" style={{ animationDelay: '0.3s' }}>
-            <CardHeader>
-              <CardTitle className="text-muted-foreground flex items-center gap-2">
-                <div className="w-2 h-2 bg-muted-foreground rounded-full"></div>
-                Inversiones No Económicas
-              </CardTitle>
-              <p className="text-sm text-muted-foreground">
-                €{nonEconomicTotal.toLocaleString()} • {nonEconomicActivityInvestments.length} posiciones
-              </p>
-            </CardHeader>
-            <CardContent>
-              <InvestmentList investments={nonEconomicActivityInvestments} />
-            </CardContent>
-          </Card>
-        </div>
+        <InvestmentList investments={categoryData.investments} />
       </div>
     </div>
   );
 };
 
-export default CategoryDetails;
+export default React.memo(CategoryDetails);

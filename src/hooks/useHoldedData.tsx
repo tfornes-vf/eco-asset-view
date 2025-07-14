@@ -8,12 +8,14 @@ export const useHoldedData = () => {
     queryFn: async () => {
       const { data, error } = await supabase
         .from('holded_investments')
-        .select('*')
+        .select('id, external_id, name, category, amount, return_percentage, is_economic_activity')
         .order('amount', { ascending: false });
       
       if (error) throw error;
       return { investments: data as Investment[] };
     },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    gcTime: 10 * 60 * 1000, // 10 minutes
   });
 
   return {
