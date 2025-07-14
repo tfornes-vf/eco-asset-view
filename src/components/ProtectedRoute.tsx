@@ -7,7 +7,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { user, loading } = useAuth();
+  const { user, profile, loading } = useAuth();
 
   if (loading) {
     return (
@@ -19,6 +19,20 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 
   if (!user) {
     return <Navigate to="/auth" replace />;
+  }
+
+  // If user has a profile but is not approved, redirect to pending page
+  if (profile && profile.is_approved === false) {
+    return <Navigate to="/pending" replace />;
+  }
+
+  // If user is authenticated but no profile exists yet, show loading
+  if (user && !profile) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+      </div>
+    );
   }
 
   return <>{children}</>;

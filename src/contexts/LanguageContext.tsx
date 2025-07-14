@@ -56,6 +56,34 @@ const translations = {
     'category.details': 'Detalles de',
     'category.totalAmount': 'Importe Total',
     'category.totalElements': 'elementos',
+    
+    // User Management
+    'userManagement.title': 'Gestión de Usuarios',
+    'userManagement.approved': 'Aprobado',
+    'userManagement.pending': 'Pendiente',
+    'userManagement.joinedOn': 'Se unió el',
+    'userManagement.selectRole': 'Seleccionar rol',
+    'userManagement.userApproved': 'Usuario aprobado correctamente',
+    'userManagement.userRejected': 'Usuario rechazado',
+    'userManagement.userDeleted': 'Usuario eliminado correctamente',
+    'userManagement.fetchError': 'Error al cargar usuarios',
+    'userManagement.updateError': 'Error al actualizar usuario',
+    'userManagement.deleteError': 'Error al eliminar usuario',
+    'userManagement.deletePermissionError': 'Solo el superusuario puede eliminar usuarios',
+    
+    // Pending Approval
+    'pending.title': 'Pendiente de Aprobación',
+    'pending.description': 'Tu solicitud de acceso está siendo revisada',
+    'pending.message': 'Un administrador revisará tu solicitud pronto',
+    'pending.contact': 'Si tienes alguna pregunta, contacta con el administrador',
+    
+    // Roles
+    'roles.superuser': 'Superusuario',
+    'roles.admin': 'Administrador', 
+    'roles.viewer': 'Visualizador',
+    
+    // Profile
+    'profile.users': 'Usuarios',
   },
   en: {
     // Navigation
@@ -103,6 +131,34 @@ const translations = {
     'category.details': 'Details of',
     'category.totalAmount': 'Total Amount',
     'category.totalElements': 'elements',
+    
+    // User Management
+    'userManagement.title': 'User Management',
+    'userManagement.approved': 'Approved',
+    'userManagement.pending': 'Pending',
+    'userManagement.joinedOn': 'Joined on',
+    'userManagement.selectRole': 'Select role',
+    'userManagement.userApproved': 'User approved successfully',
+    'userManagement.userRejected': 'User rejected',
+    'userManagement.userDeleted': 'User deleted successfully',
+    'userManagement.fetchError': 'Error loading users',
+    'userManagement.updateError': 'Error updating user',
+    'userManagement.deleteError': 'Error deleting user',
+    'userManagement.deletePermissionError': 'Only superuser can delete users',
+    
+    // Pending Approval
+    'pending.title': 'Pending Approval',
+    'pending.description': 'Your access request is being reviewed',
+    'pending.message': 'An administrator will review your request soon',
+    'pending.contact': 'If you have any questions, contact the administrator',
+    
+    // Roles
+    'roles.superuser': 'Superuser',
+    'roles.admin': 'Administrator', 
+    'roles.viewer': 'Viewer',
+    
+    // Profile
+    'profile.users': 'Users',
   },
   ca: {
     // Navigation
@@ -150,6 +206,34 @@ const translations = {
     'category.details': 'Detalls de',
     'category.totalAmount': 'Import Total',
     'category.totalElements': 'elements',
+    
+    // User Management
+    'userManagement.title': 'Gestió d\'Usuaris',
+    'userManagement.approved': 'Aprovat',
+    'userManagement.pending': 'Pendent',
+    'userManagement.joinedOn': 'Es va unir el',
+    'userManagement.selectRole': 'Seleccionar rol',
+    'userManagement.userApproved': 'Usuari aprovat correctament',
+    'userManagement.userRejected': 'Usuari rebutjat',
+    'userManagement.userDeleted': 'Usuari eliminat correctament',
+    'userManagement.fetchError': 'Error carregant usuaris',
+    'userManagement.updateError': 'Error actualitzant usuari',
+    'userManagement.deleteError': 'Error eliminant usuari',
+    'userManagement.deletePermissionError': 'Només el superusuari pot eliminar usuaris',
+    
+    // Pending Approval
+    'pending.title': 'Pendent d\'Aprovació',
+    'pending.description': 'La teva sol·licitud d\'accés està sent revisada',
+    'pending.message': 'Un administrador revisarà la teva sol·licitud aviat',
+    'pending.contact': 'Si tens alguna pregunta, contacta amb l\'administrador',
+    
+    // Roles
+    'roles.superuser': 'Superusuari',
+    'roles.admin': 'Administrador', 
+    'roles.viewer': 'Visualitzador',
+    
+    // Profile
+    'profile.users': 'Usuaris',
   }
 };
 

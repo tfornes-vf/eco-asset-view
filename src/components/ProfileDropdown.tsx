@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Switch } from '@/components/ui/switch';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
-import { Settings, LogOut, Sun, Moon } from 'lucide-react';
+import { Settings, LogOut, Sun, Moon, Users } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useTheme } from 'next-themes';
@@ -64,6 +64,13 @@ const ProfileDropdown = () => {
           <Settings className="mr-2 h-4 w-4" />
           <span>{t('profile.settings')}</span>
         </DropdownMenuItem>
+        
+        {(profile?.role === 'superuser' || profile?.role === 'admin') && (
+          <DropdownMenuItem onClick={() => navigate('/users')}>
+            <Users className="mr-2 h-4 w-4" />
+            <span>{t('profile.users') || 'Usuarios'}</span>
+          </DropdownMenuItem>
+        )}
         
         <DropdownMenuSeparator />
         

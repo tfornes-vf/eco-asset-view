@@ -67,36 +67,56 @@ export type Database = {
       }
       profiles: {
         Row: {
+          approved_at: string | null
+          approved_by: string | null
           created_at: string
           display_name: string | null
           email: string | null
           email_notifications: boolean | null
           id: string
+          is_approved: boolean | null
           language: string | null
+          role: string | null
           updated_at: string
           user_id: string
         }
         Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           id?: string
+          is_approved?: boolean | null
           language?: string | null
+          role?: string | null
           updated_at?: string
           user_id: string
         }
         Update: {
+          approved_at?: string | null
+          approved_by?: string | null
           created_at?: string
           display_name?: string | null
           email?: string | null
           email_notifications?: boolean | null
           id?: string
+          is_approved?: boolean | null
           language?: string | null
+          role?: string | null
           updated_at?: string
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "profiles_approved_by_fkey"
+            columns: ["approved_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

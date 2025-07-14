@@ -5,6 +5,10 @@ export interface Profile {
   email?: string;
   language: 'es' | 'en' | 'ca';
   email_notifications: boolean;
+  is_approved?: boolean;
+  role?: string;
+  approved_by?: string;
+  approved_at?: string;
   created_at: string;
   updated_at: string;
 }

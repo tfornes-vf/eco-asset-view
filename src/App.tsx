@@ -11,6 +11,8 @@ import Dashboard from "./pages/Dashboard";
 import CategoryDetails from "./pages/CategoryDetails";
 import Auth from "./pages/Auth";
 import Settings from "./pages/Settings";
+import UserManagement from "./pages/UserManagement";
+import PendingApproval from "./pages/PendingApproval";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -41,6 +43,12 @@ const App = () => (
                     <Settings />
                   </ProtectedRoute>
                 } />
+                <Route path="/users" element={
+                  <ProtectedRoute>
+                    <UserManagement />
+                  </ProtectedRoute>
+                } />
+                <Route path="/pending" element={<PendingApproval />} />
                 {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
